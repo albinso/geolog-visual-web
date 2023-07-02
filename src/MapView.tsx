@@ -15,7 +15,7 @@ export default function MapView() {
 
     const { status, data, updateFunc, updateNoCache } = useLocations({ timeRange: [date[0].valueOf(), date[1].valueOf()], latitudeRange: [-90, 90], longitudeRange: [-180, 180], num: num });
 
-    const [location, startAnimation] = useAnimate({ locations: data, initSpeed: speed });
+    const [location, startAnimation, stopAnimation] = useAnimate({ locations: data, initSpeed: speed });
     const center = useMemo(() => ({ lat: location.latitude, lng: location.longitude }), [location]);
 
 
@@ -28,6 +28,10 @@ export default function MapView() {
 
             <div className='settings'>
                 <h1>Map View</h1>
+                { location && 
+                (<div><h2>{moment(location.timestamp).format()}</h2>
+                 <h2>{location.accuracy}</h2></div>)
+                }
 
                 <ReactSlider
                     className="horizontal-slider"
@@ -43,13 +47,14 @@ export default function MapView() {
                     thumbClassName="example-thumb"
                     trackClassName="example-track"
                     min={1}
-                    max={30}
+                    max={100}
                     renderThumb={(props, state) => <div {...props}>Hello: {state.valueNow}</div>}
                     value={speed} onChange={(n, t) => setSpeed(n)}
                 />
                 <button onClick={updateFunc}>Update</button>
                 <button onClick={updateNoCache}>Update No Cache</button>
                 <button onClick={startAnimation}>Animate</button>
+                <button onClick={stopAnimation}>Stop</button>
                 <Calendar callback={(e) => {
                     console.log("Setting dates");
                     console.log(e[0].format());
