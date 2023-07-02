@@ -1,18 +1,27 @@
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { GoogleMap, Marker, MarkerClusterer, Polyline, useLoadScript } from "@react-google-maps/api";
 import { useLocations } from './UseLocations.ts';
 import ReactSlider from 'react-slider';
 import DateTimeRangePicker from '@wojtekmaj/react-datetimerange-picker';
 import Calendar from './Calendar.js';
+import useAnimate from './useAnimate.ts';
+import moment from 'moment';
 
 export default function MapView() {
 
-    const [num, setNum] = useState(5);
-    const [date, setDate] = useState([new Date(), new Date()]);
+    const [num, setNum] = useState(400);
+    const [date, setDate] = useState([moment(1688259968489), moment(1688259968489)]);
+    const [speed, setSpeed] = useState(6);
 
-    const center = useMemo(() => ({ lat: 59.378543, lng: 18.004371 }), []);
     const { status, data, updateFunc, updateNoCache } = useLocations({ timeRange: [date[0].valueOf(), date[1].valueOf()], latitudeRange: [-90, 90], longitudeRange: [-180, 180], num: num });
 
+    const [location, startAnimation] = useAnimate({ locations: data, initSpeed: speed });
+    const center = useMemo(() => ({ lat: location.latitude, lng: location.longitude }), [location]);
+
+
+    useEffect(() => {
+        console.log("Updating");
+    }, [location]);
 
     return (
         <div className='map-container'>
@@ -29,8 +38,18 @@ export default function MapView() {
                     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
                     value={num} onChange={(n, t) => setNum(n)}
                 />
+                <ReactSlider
+                    className="horizontal-slider"
+                    thumbClassName="example-thumb"
+                    trackClassName="example-track"
+                    min={1}
+                    max={30}
+                    renderThumb={(props, state) => <div {...props}>Hello: {state.valueNow}</div>}
+                    value={speed} onChange={(n, t) => setSpeed(n)}
+                />
                 <button onClick={updateFunc}>Update</button>
                 <button onClick={updateNoCache}>Update No Cache</button>
+                <button onClick={startAnimation}>Animate</button>
                 <Calendar callback={(e) => {
                     console.log("Setting dates");
                     console.log(e[0].format());
@@ -45,10 +64,9 @@ export default function MapView() {
                 zoom={10}
             >
                 {
-                    data.length >= 1 &&
+                    data.length >= 1 && location &&
                     <div>
-                        <Marker position={{ lat: data[0].latitude, lng: data[0].longitude }} />
-                        <Marker position={{ lat: data[data.length - 1].latitude, lng: data[data.length - 1].longitude }} />
+                        <Marker position={{ lat: location.latitude, lng: location.longitude }} />
                         <Polyline path={data.map((d) => ({ lat: d.latitude, lng: d.longitude }))} />
                     </div>
                 }
