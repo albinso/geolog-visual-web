@@ -11,3 +11,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.App {
+  height: 100vh;
+  width: 100vw;
+}
+
+.map-container {
+  height: 80%;
+  width: 100%;
+}
+
+.settings {
+  display: inline;
+  height: 100%;
+  float: none;
+  overflow: hidden;
+  fill: aqua;
+}
+
+.datepicker {
+  display: inline;
+  float: none;
+  overflow:visible;
+  height: 100%;
+  width: 100%;
+  fill: blanchedalmond;
+}
