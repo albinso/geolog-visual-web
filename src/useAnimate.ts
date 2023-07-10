@@ -11,8 +11,8 @@ export default function useAnimate({ locations, initSpeed }) {
 
     function delay(time, divisor = 1) {
         let actualTime = time / divisor;
-        if (actualTime > 20000) {
-            actualTime = 20000;
+        if (time > 60000) {
+            actualTime = 60000/divisor;
         }
         console.log("Delay of " + time / divisor + " ms");
         return new Promise(resolve => setTimeout(resolve, actualTime));

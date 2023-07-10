@@ -86,6 +86,10 @@ async function loadCache() {
 }
 
 async function saveCache(cache) {
-    localStorage.setItem('locationsCache', JSON.stringify(cache.current));
+    try {
+        localStorage.setItem('locationsCache', JSON.stringify(cache.current));
+    } catch (e) {
+        alert("Over quota");
+    }
 }
 
